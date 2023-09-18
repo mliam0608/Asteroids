@@ -26,12 +26,13 @@ class PlayerShip:
 
         self.center = self.shape.get_rect(center = (self.x, self.y)).center 
 
-    #method to display the PlayerShip on the game screen
+    #function to display the PlayerShip on the game screen
     def show(self, surface):
         rotated_image = pygame.transform.rotate(self.shape, self.angle)
         new_rect = rotated_image.get_rect(center = self.shape.get_rect(topleft = (self.x, self.y)).center)
         surface.blit(rotated_image, new_rect)
 
+    #function to reset the game
     def game_reset(self):
         self. x = 450
         self.y = 300
@@ -39,31 +40,37 @@ class PlayerShip:
         self.angle = 0
         self.velocity = 0  
 
+    #function to update PlayerShip when it is hit
     def ship_hit(self):
         self. x = 450
         self.y = 300
         self.lives -= 1
         self.angle = 0
-        self.velocity = 0    
+        self.velocity = 0  
 
+    #function to update the coordinates of the PlayerShip
     def updateCoords(self):
+        #increment the PlayerShip's x and y coordinates
         self.x += math.cos((-self.angle - 90) * 0.0174533) * self.velocity
         self.y += math.sin((self.angle - 90) * 0.0174533) * self.velocity
         
+        #PlayerShip appears on other side of screen if it leaves x-axis
         if self.x <= -50:
             self.x = screenwidth + 20
         elif self.x >= screenwidth + 50:
             self.x = -50
         
+        #Playership appears on top or bottom of screen if it leaves y-axis
         if self.y <= -50:
             self.y = screenheight + 20
         elif self.y >= screenheight + 50:
             self.y = -50
 
+        #constantly reduce the PlayerShip's velocity
         if self.velocity > 0:
             self.velocity -= 0.08
 
-    #method to update PlayerShip coordinates on each clock tick
+    #function to update PlayerShip coordinates on each clock tick
     def turnLeft(self):
         if self.angle >= 360:
             self.angle = 0
@@ -71,7 +78,7 @@ class PlayerShip:
             self.angle = 0
         self.angle += 5
         
-    #method to update PlayerShip coordinates on each clock tick
+    #function to update PlayerShip coordinates on each clock tick
     def turnRight(self):
         if self.angle >= 360:
             self.angle -= 360
@@ -79,10 +86,12 @@ class PlayerShip:
             self.angle += 360
         self.angle -= 5
 
+    #function to increase the PlayerShip's velocity
     def accelerate(self):
         if self.velocity <= 8:
             self.velocity += 0.8
 
+#class to control the player's lasers
 class Laser:
     def __init__(self, x, y, angle):
         self.x = x
@@ -92,34 +101,37 @@ class Laser:
         self.shape = pygame.transform.scale(pygame.image.load('projectile.png'), (20,50))
         self.speed = 10
 
-    #method to show the laser on the game screen
+    #function to show the laser on the game screen
     def show(self, surface):
         if self.active == True:
             rotated_image = pygame.transform.rotate(self.shape, self.angle)
             new_rect = rotated_image.get_rect(center = self.shape.get_rect(topleft = (self.x + 38, self.y + 21)).center)
             surface.blit(rotated_image, new_rect)
 
+    #function to fire a Laser from the PlayerShip
     def fire(self, x, y, angle):
         self.active = True
         self.angle = angle
         self.x = x + 45 * math.cos((-angle - 90) * 0.0174533)
         self.y = y + 45 * math.sin((-angle - 90) * 0.0174533)
 
-    #method to move the laser up on the screen
+    #function to move the laser up on the screen
     def updateCoords(self):  
         self.x += math.cos((-self.angle - 90) * 0.0174533) * self.speed
         self.y += math.sin((self.angle - 90) * 0.0174533) * self.speed
 
+        #deactivates Laser if it leaves the screen
         if self.x <= -50 or self.x >= screenwidth:
             self.active = False
         if self.y <= -50 or self.y >= screenheight:
             self.active = False
 
-    #method to check if the laser collides with an enemy
+    #function to check if the laser collides with an enemy
     def checkCollision(self, enemy_x, enemy_y, enemy_size, enemy_alive):
         if abs(enemy_x - self.x) < (enemy_size / 2) and abs(self.y - enemy_y) < (enemy_size / 2) and enemy_alive == True and self.active == True:
             return True
 
+#class to control the player's Cannon (group of Lasers)
 class Cannon:
     def __init__(self, x, y, angle):
         self.lasers = [Laser(x, y, angle),
@@ -128,6 +140,7 @@ class Cannon:
                        Laser(x, y, angle),
                        Laser(x, y, angle)]
 
+    #function to show each active Laser
     def show(self, surface):
         for laser in self.lasers:
             if laser.active == True:
@@ -136,6 +149,7 @@ class Cannon:
                 surface.blit(rotated_image, new_rect)
                 laser.updateCoords()
 
+    #function to fire a Laser from the Cannon
     def fire(self, x, y, angle):
         for i in range(1,3):
             if self.lasers[0].active == False:
@@ -144,8 +158,8 @@ class Cannon:
             if self.lasers[i].active == False and self.lasers[i - 1].active == True:
                 self.lasers[i].fire(x, y, angle)
                 break
-        # self.lasers[0].fire(x, y, angle)
 
+#class to control an Asteroid
 class Asteroid:
     def __init__(self, size, x, y, speed = 2):
         self.x = x
@@ -156,14 +170,17 @@ class Asteroid:
         self.active = True
         self.shape = pygame.transform.scale(pygame.image.load('asteroid.png'), (self.size, self.size))
 
+    #function to show an Asteroid
     def show(self, surface):
         if self.active == True and self.size >= 60:
             surface.blit(self.shape, (self.x, self.y))
 
+    #function to update the coordinates of an Asteroid
     def updateCoords(self):
         self.x += math.cos((-self.angle - 90) * 0.0174533) * self.speed
         self.y += math.sin((self.angle - 90) * 0.0174533) * self.speed
 
+        #Asteroid appears on opposite side of screen when it leaves bounds
         if self.x <= -100:
             self.x = screenwidth + 20
         elif self.x >= screenwidth + 100:
@@ -173,31 +190,38 @@ class Asteroid:
         elif self.y >= screenheight + 100:
             self.y = -50
 
-    #method to determine if an EnemyShip is touching a PlayerShip
+    #function to determine if an EnemyShip is touching a PlayerShip
     def touchingPlayer(self, player_x, player_y):
         if abs(self.x - player_x) < self.size / 2 and abs(self.y - player_y) < self.size / 2 and self.active == True and self.size >= 60:
             return True
 
+#class to control a group of Asteroids
 class Asteroid_Cluster:
     def __init__(self):
         self.asteroids = []
         self.size = 5
 
+    #function to show each Asteroid in the Asteroid_Cluster
     def show(self, surface):
         for asteroid in self.asteroids:
             asteroid.show(surface)
-        
+
+    #function to create a group of Asteroids    
     def makeAsteroids(self):
         self.asteroids = []
         for i in range(self.size):
             self.asteroids.append(Asteroid(100, random.randrange(0, 1000), random.randrange(-100, 100)))
         self.size = 5
 
+    #function to update the coordinates of each Asteroid
     def updateCoords(self):
         for asteroid in self.asteroids:
             asteroid.updateCoords()
 
+    #function to remove an Asteroid from the Asteroid_Cluster
     def destroy(self, asteroid, size, x, y, speed):
+        screen.blit(pygame.transform.scale(pygame.image.load('ship_explosion.png'), (size, size)), (x, y))
+        pygame.display.update()
         if asteroid.size > 60:
             self.asteroids.remove(asteroid)
             self.asteroids.append(Asteroid(size - 20, x, y, speed + 1.5))
@@ -205,7 +229,7 @@ class Asteroid_Cluster:
         else:
             self.asteroids.remove(asteroid)
 
-#method to draw a starting menu that greets the player and provides game instructions
+#function to draw a starting menu that greets the player and provides game instructions
 def draw_start_menu():
     screen.fill((15, 15, 15))
     font = pygame.font.SysFont('arial', 190)
@@ -227,7 +251,7 @@ def draw_start_menu():
     screen.blit(comet, (800, 100))
     pygame.display.update()
 
-#method to draw a screen that appears between game levels
+#function to draw a screen that appears between game levels
 def draw_next_level(score, lives):
     screen.fill((15, 15, 15))
     font = pygame.font.SysFont('arial', 60)
@@ -247,7 +271,7 @@ def draw_next_level(score, lives):
     screen.blit(laser, (400, 420)) 
     pygame.display.update()
 
-#method to draw a game over screen
+#function to draw a game over screen
 def draw_game_over_screen(score):
     screen.fill((0, 0, 0))
     # image = pygame.transform.scale(pygame.image.load("game_over.png"), (1000,500))
@@ -288,13 +312,16 @@ while True:
             if event.type == pygame.QUIT:
                 sys.exit()
 
+    #initialize keys
     keys = pygame.key.get_pressed()
 
+    #show the game's start menu
     if game_state == "startMenu":
         draw_start_menu()
         if keys[pygame.K_SPACE]:
             game_state = "game"
 
+    #show the game's end screen
     if game_state == "gameOver":
         draw_game_over_screen(score)
         if keys[pygame.K_SPACE]:
@@ -303,6 +330,7 @@ while True:
             Asteroids.makeAsteroids()
             game_state = "game"
 
+    #show the completed level screen
     if game_state == "nextLevel":
         draw_next_level(score, Player.lives)
         if keys[pygame.K_SPACE]:
@@ -311,17 +339,19 @@ while True:
             Asteroids.makeAsteroids()
             game_state = "game"
 
-
+    #show the game screen
     if game_state == "game":
+        #show the game elements on the screen
+        pygame.time.wait(25)
         screen.blit(bg, (0, 0))
         score_text = font.render(f'Score: {score}', True, (255, 255, 255))
         lives_text = font.render(f'Lives: {Player.lives}', True, (255, 255, 255))
         screen.blit(score_text, (10, 10)) 
         screen.blit(lives_text, (10, 30))   
-        pygame.time.wait(20)
-            
 
+        #control the behavior of the Asteroid_Cluster
         for asteroid in Asteroids.asteroids:
+            #check if any Lasers are colliding with an Asteroid
             for laser in Cannon.lasers:
                 if laser.checkCollision(asteroid.x, asteroid.y, asteroid.size, asteroid.active):
                     if asteroid.size >= 40:
@@ -334,13 +364,16 @@ while True:
                         score += 20
                     elif asteroid.size == 60:
                         score += 50
+            #check if any Asteroids are hitting the PlayerShip
             if asteroid.touchingPlayer(Player.x, Player.y):
                 Player.ship_hit()
                 Asteroids.destroy(asteroid, asteroid.size, asteroid.x, asteroid.y, asteroid.speed)
 
+        #end the game if the player is out of lives
         if Player.lives == 0:
             game_state = "gameOver"
 
+        #clear level if there are no more Asteroids
         if len(Asteroids.asteroids) == 0:
             game_state = "nextLevel"
 
