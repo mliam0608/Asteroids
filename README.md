@@ -1,5 +1,7 @@
-This respository is a version of the arcade game Asteroids. The game was written in Python,
-using the Pygame module to create a GUI.
+A version of the game Asteroids programmed using Python. 
+
+This project was created as a personal project using Pygame to create the GUI.
+To play the game, a user must first install Pygame.
 
 Created July 2023
 
