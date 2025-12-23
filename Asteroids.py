@@ -9,7 +9,7 @@ pygame.init()  # initialize pygame
 #initialzize the background image
 screenwidth, screenheight = (1000, 720)
 screen = pygame.display.set_mode((screenwidth, screenheight))
-picture = pygame.image.load('space_background.webp')
+picture = pygame.image.load('images/space_background.webp')
 bg = pygame.transform.scale(picture, (screenwidth, screenheight))
 pygame.display.set_caption('Asteroids by Liam McCarthy')
 font = pygame.font.Font(None, 36)
@@ -17,7 +17,7 @@ font = pygame.font.Font(None, 36)
 #class to control the player's ship
 class PlayerShip:
     def __init__(self):
-        self.shape = pygame.transform.scale(pygame.image.load('spaceship.png'), (100,100))
+        self.shape = pygame.transform.scale(pygame.image.load('images/spaceship.png'), (100,100))
         self.angle = 0
         self.velocity = 0
         self.x = 450
@@ -98,7 +98,7 @@ class Laser:
         self.y = y
         self.angle = angle
         self.active = False
-        self.shape = pygame.transform.scale(pygame.image.load('projectile.png'), (20,50))
+        self.shape = pygame.transform.scale(pygame.image.load('images/projectile.png'), (20,50))
         self.speed = 10
 
     #function to show the laser on the game screen
@@ -168,7 +168,7 @@ class Asteroid:
         self.speed = speed
         self.angle = random.randrange(0, 360)
         self.active = True
-        self.shape = pygame.transform.scale(pygame.image.load('asteroid.png'), (self.size, self.size))
+        self.shape = pygame.transform.scale(pygame.image.load('images/asteroid.png'), (self.size, self.size))
 
     #function to show an Asteroid
     def show(self, surface):
@@ -220,7 +220,7 @@ class Asteroid_Cluster:
 
     #function to remove an Asteroid from the Asteroid_Cluster
     def destroy(self, asteroid, size, x, y, speed):
-        screen.blit(pygame.transform.scale(pygame.image.load('ship_explosion.png'), (size, size)), (x, y))
+        screen.blit(pygame.transform.scale(pygame.image.load('images/ship_explosion.png'), (size, size)), (x, y))
         pygame.display.update()
         if asteroid.size > 60:
             self.asteroids.remove(asteroid)
@@ -245,8 +245,8 @@ def draw_start_menu():
     screen.blit(instructions1, (screenwidth/2 - instructions1.get_width()/2, 250))
     screen.blit(instructions2, (screenwidth/2 - instructions2.get_width()/2, 280))
     screen.blit(instructions3, (screenwidth/2 - instructions3.get_width()/2, 310))
-    comet = pygame.transform.scale(pygame.image.load('comet.png'), (200, 200))
-    ship = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('spaceship.png'), (200, 200)), -50)
+    comet = pygame.transform.scale(pygame.image.load('images/comet.png'), (200, 200))
+    ship = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('images/spaceship.png'), (200, 200)), -50)
     screen.blit(ship, (300, 450))
     screen.blit(comet, (800, 100))
     pygame.display.update()
@@ -258,9 +258,9 @@ def draw_next_level(score, lives):
     title = font.render('Press [SPACE] to destroy more asteroids!', True, (255, 255, 0))
     show_score = font.render(f'Score: {score}', True, (255, 255, 0))
     show_lives = font.render(f'Lives Remaining: {lives}', True, (255, 255, 0))
-    comet = pygame.transform.scale(pygame.image.load('comet.png'), (300, 300))
-    ship = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('spaceship.png'), (300, 300)), -50)
-    laser = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('projectile.png'), (100, 150)), -50)
+    comet = pygame.transform.scale(pygame.image.load('images/comet.png'), (300, 300))
+    ship = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('images/spaceship.png'), (300, 300)), -50)
+    laser = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('images/projectile.png'), (100, 150)), -50)
     screen.blit(title, (screenwidth/2 - title.get_width()/2, 200 - title.get_height()/2))
     screen.blit(show_score, (screenwidth/2 - show_score.get_width()/2, 200 + show_score.get_height()/2))
     screen.blit(show_lives, (screenwidth/2 - show_lives.get_width()/2, 200 + show_score.get_height() + show_lives.get_height()/2))
@@ -282,9 +282,9 @@ def draw_game_over_screen(score):
     game_over = bigFont.render(f'GAME OVER', True, (255, 255, 0))
     show_score = font.render(f'Score: {score}', True, (255, 255, 0))
     try_again = smallFont.render('Press [SPACE] to try again!', True, (255, 255, 0))
-    astronaut = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('astronaut.png'), (100,100)), 30)
-    explosion = pygame.transform.scale(pygame.image.load('ship_explosion.png'), (200, 200))
-    ship = pygame.transform.scale(pygame.image.load('spaceship.png'), (200, 200))
+    astronaut = pygame.transform.rotate(pygame.transform.scale(pygame.image.load('images/astronaut.png'), (100,100)), 30)
+    explosion = pygame.transform.scale(pygame.image.load('images/ship_explosion.png'), (200, 200))
+    ship = pygame.transform.scale(pygame.image.load('images/spaceship.png'), (200, 200))
     screen.blit(game_over, (screenwidth/2 - game_over.get_width()/2, 50))
     screen.blit(show_score, (screenwidth/2 - show_score.get_width()/2, 300))
     screen.blit(try_again, (screenwidth/2 - try_again.get_width()/2, 400))
